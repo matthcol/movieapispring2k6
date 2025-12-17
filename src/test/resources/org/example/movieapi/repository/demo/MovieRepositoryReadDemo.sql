@@ -1,0 +1,10 @@
+INSERT INTO Movie (title, release_year, duration) VALUES ('Avatar: Fire and Ashes', 2025, 197);
+INSERT INTO Movie (title, release_year, duration) VALUES ('Superman', 2025, 129);
+INSERT INTO Movie (title, release_year, duration) VALUES ('One Battle After Another', 2025, 161);
+INSERT INTO Movie (title, release_year, duration) VALUES ('Superman', 1978, 143);
+INSERT INTO Movie (title, release_year, duration) VALUES ('Superman II', 1980, 127);
+INSERT INTO Movie (title, release_year, duration) VALUES ('Harry Potter and the Chamber of Secrets', 2002, 161);
+INSERT INTO Movie (title, release_year, duration) VALUES ('Harry Potter and the Goblet of Fire', 2005, 157);
+INSERT INTO Movie (title, release_year, duration) VALUES ('The Fast and the Furious', 2001, 106);
+INSERT INTO Movie (title, release_year, duration) VALUES ('The Fast and the Furious: Tokyo Drift', 2006, 104);
+INSERT INTO Movie (title, release_year, duration) VALUES ('Avengers: Endgame', 2019, 181);

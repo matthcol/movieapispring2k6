@@ -1,0 +1,163 @@
+package org.example.movieapi.repository.demo;
+
+import org.example.movieapi.entity.Movie;
+import org.example.movieapi.repository.MovieRepository;
+import org.junit.jupiter.api.Named;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.data.domain.*;
+import org.springframework.test.context.jdbc.Sql;
+
+import java.text.MessageFormat;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Named.named;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
+@DataJpaTest
+@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+public class MovieRepositoryReadDemo {
+    @Autowired
+    MovieRepository movieRepository;
+
+    @Test
+    void demoFindAll(){
+        movieRepository.findAll()
+                .forEach(System.out::println);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints={
+            1,2,5,9,6,10,0
+    })
+    void demoFindByIdIf(int movieId){
+        var optMovie = movieRepository.findById(movieId);
+        System.out.println(optMovie);
+        System.out.println("###########");
+        if (optMovie.isPresent()){
+            var movie = optMovie.get();
+            System.out.println(MessageFormat.format("Le Movie avec ID {0} est: {1}", movieId, movie));
+        } else {
+            System.out.println(MessageFormat.format("Pas de Movie avec ID {0}", movieId));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints={
+            1,2,5,9,6,10,0
+    })
+    void demoFindByIdIfPresent(int movieId){
+        var optMovie = movieRepository.findById(movieId);
+        System.out.println(optMovie);
+        System.out.println("###########");
+        optMovie.ifPresent(movie -> System.out.println(
+                MessageFormat.format("Le Movie avec ID {0} est: {1} ({2})", movieId, movie.getTitle(), movie.getReleaseYear())
+        ));
+    }
+
+    public static Stream<Arguments> sortSource() {
+        return Stream.of(
+                Arguments.of(
+                        Named.of(
+                                "releaseYear, title",
+                                Sort.by("releaseYear","title")
+                        )
+                ),
+                Arguments.of(
+                        Named.of(
+                                "releaseYear desc, title",
+                                Sort.by(
+                                        Sort.Order.desc("releaseYear"),
+                                        Sort.Order.asc("title")
+                                )
+                        )
+                )
+        );
+    }
+
+    @ParameterizedTest(name = "By {0}")
+    @MethodSource("sortSource")
+    void demoFindAllSorted(Sort sort){
+        movieRepository.findAll(sort)
+                .forEach(System.out::println);
+    }
+
+    @Test
+    void demoFindAllPagination(){
+        Pageable pageable = Pageable.ofSize(4);
+        var moviePage = movieRepository.findAll(pageable);
+        System.out.println("Nbre Total de page: " + moviePage.getTotalPages());
+        System.out.println("Nbre Total de éléments: " + moviePage.getTotalElements());
+        System.out.println("Page 1:");
+        moviePage.get().forEach(System.out::println);
+
+        //Nouvelle page:
+        var pageableNext = PageRequest.of(1,4);
+        var moviePage2 = movieRepository.findAll(pageableNext);
+        System.out.println("Page 2:");
+        moviePage2.get().forEach(System.out::println);
+    }
+
+    public static Stream<Arguments> findWithExample() {
+        var movieProbe1 = Movie.builder().releaseYear(2025).build();
+        var movieProbe2 = Movie.builder().duration(129).build();
+        var matcher2 = ExampleMatcher.matching().withIgnorePaths("releaseYear");
+
+        var movieProbe3 = Movie.builder().title("superman").releaseYear(2025).build();
+        var matcher3 = ExampleMatcher.matching()
+                .withMatcher("title", match -> match.ignoreCase());//On peut faire "ALT + Entrée" pour remplacer par une référence
+
+        var movieProbe4 = Movie.builder().title("superman").build();
+        var matcher4 = ExampleMatcher.matching()
+                .withIgnorePaths("releaseYear")
+                .withMatcher("title", match -> match
+                        .ignoreCase()
+                        .startsWith()
+                );
+
+        return Stream.of(
+                arguments(named("Year 2025",Example.of(movieProbe1))),
+                arguments(named("Duration 129",Example.of(movieProbe2, matcher2))),
+                //Titre en ignorant la casse (Superman) de l'année 2025
+                //Titre commencant par "Superman" tjrs en ignorant la casse
+                arguments(named("Titre en ignorant la casse en 2025",Example.of(movieProbe3, matcher3))),
+                arguments(named("Titre en ignorant la casse et qui commence par \"Superman\"",Example.of(movieProbe4, matcher4)))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("findWithExample")
+    void demoFindAllWithExample(Example<Movie> example){
+        //QBE = Query By Example --> C'est un pattern
+        movieRepository.findAll(example).forEach(System.out::println);
+    }
+
+    @Test
+    void demoFindByReleaseYearBetweenOrderByReleaseYear(){
+        movieRepository.findByReleaseYearBetweenOrderByReleaseYear(2000, 2025)
+                .forEach(System.out::println);
+    }
+
+    @Test
+    void demoFindByTitleContainingIgnoreCaseAndReleaseYearGreaterThan(){
+        movieRepository.findByTitleContainingIgnoreCaseAndReleaseYearGreaterThan("Harry",1900, Sort.by("releaseYear"))
+                .forEach(System.out::println);
+    }
+
+    @Test
+    void demoFindByTitleYear(){
+        movieRepository.findByTitleYear("%HARRY%", 2002)
+                .forEach(System.out::println);
+    }
+
+    @Test
+    void demoFindByYearDuration(){
+        movieRepository.findByYearDuration(1999, 100)
+                .forEach(System.out::println);
+    }
+}
