@@ -166,74 +166,34 @@ public class MovieRepositoryReadDemo {
                 .forEach(System.out::println);
     }
 
-    @Test
-    void demoFindByDirector(){
-        movieRepository.findByDirectorNameContaining("James Cameron")
-                .forEach(System.out::println);
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {
-            "Cameron", "James", "James Cameron",  // OK
-            "james cameron"  // KO
+            "cameron", "james", "james cameron"
     })
-    void demoFindByDirectorName(String name){
-        movieRepository.findByDirectorName(name, Sort.by("director.personId","releaseYear"))
-                .forEach(movie -> System.out.println(MessageFormat.format(
-                        "Film de {0,number,#} - {1} réalisé par {2}",
-                        movie.getReleaseYear(),
-                        movie.getTitle(),
-                        movie.getDirector().getName()
-                )));
+    void demoFindByDirector(String directorName){
+        personRepository.findByName(directorName)
+                .forEach(person -> {
+                    System.out.println("Le nom de la personne est:" + person.getName());
+                    System.out.println("Filmographie en tant que réalisateur: ");
+                    person.getDirectedMovies().forEach(
+                            movie -> System.out.println("    - " + movie.getTitle())
+                    );
+                });
     }
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "% Cameron", "James %", "James Cameron",  "james cameron"
-    })
-    void demoFindByDirectorNameCI(String namePattern){
-        String namePatternNormalize = namePattern.toLowerCase();
-        movieRepository.findByDirectorNameCI(namePatternNormalize, Sort.by("director.personId","releaseYear"))
-                .forEach(movie -> System.out.println(MessageFormat.format(
-                        "Film de {0,number,#} - {1} réalisé par {2}",
-                        movie.getReleaseYear(),
-                        movie.getTitle(),
-                        movie.getDirector().getName()
-                )));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "Sam", "Daniel", "Radcliffe", "Corenswet"
+            "sam", "daniel", "radcliffe", "corenswet"
     })
     void demoFindByActorsName(String nameActor){
-        movieRepository.findByActorName(nameActor, Sort.by(
-                "releaseYear"))
-                .forEach(movie -> System.out.println(
-                        MessageFormat.format(
-                                "Acteur {0} a joué dans: {1} ({2,number,#})",
-                                nameActor,
-                                movie.getTitle(),
-                                movie.getReleaseYear()
-                        )
-                ));
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {1,2,6,9,10,0})
-    void demoFindByActorId(int actorId){
-        personRepository.findById(actorId)
-                .ifPresentOrElse(
-                        person -> movieRepository.findByActorId(person.getPersonId())
-                                .forEach( movie -> System.out.println(MessageFormat.format(
-                                        "Acteur {0} avec ID {1} à joué dans le film {2} ({3})",
-                                        person.getName(),
-                                        actorId,
-                                        movie.getTitle(),
-                                        movie.getReleaseYear()
-                                ))),
-                        () -> System.out.println("Aucun acteur n'a été trouvé avec l'ID: "+actorId)
-                );
+        personRepository.findByName(nameActor)
+                .forEach(person -> {
+                    System.out.println("Le nom de la personne est:" + person.getName());
+                    System.out.println("Filmographie en tant que acteur: ");
+                    person.getPlayedMovies().forEach(
+                            movie -> System.out.println("    - " + movie.getTitle())
+                    );
+                });
     }
 
     @Test
