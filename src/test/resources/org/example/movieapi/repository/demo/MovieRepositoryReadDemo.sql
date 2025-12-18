@@ -8,3 +8,24 @@ INSERT INTO Movie (title, release_year, duration) VALUES ('Harry Potter and the 
 INSERT INTO Movie (title, release_year, duration) VALUES ('The Fast and the Furious', 2001, 106);
 INSERT INTO Movie (title, release_year, duration) VALUES ('The Fast and the Furious: Tokyo Drift', 2006, 104);
 INSERT INTO Movie (title, release_year, duration) VALUES ('Avengers: Endgame', 2019, 181);
+INSERT INTO Movie (title, release_year, duration) VALUES ('The Terminator', 1984, 107);
+INSERT INTO Movie (title, release_year, duration) VALUES ('Terminator 2: Judgment Day', 1991, 137);
+
+INSERT INTO Person (name, birthdate) VALUES ('James Cameron', '1954-08-16');
+INSERT INTO Person (name, birthdate) VALUES ('Zoe Saldana','1978-06-19');
+INSERT INTO Person (name, birthdate) VALUES ('James Gunn', '1966-08-05');
+INSERT INTO Person (name, birthdate) VALUES ('David Corenswet', '1993-07-08');
+INSERT INTO Person (name, birthdate) VALUES ('Mike Newell', '1942-03-28');
+INSERT INTO Person (name, birthdate) VALUES ('Daniel Radcliffe', '1989-06-23');
+INSERT INTO Person (name, birthdate) VALUES ('Chris Colombus', '1958-09-10');
+INSERT INTO Person (name, birthdate) VALUES ('Emma Watson', '1990-04-15');
+INSERT INTO Person (name, birthdate) VALUES ('Sam Worthington', '1976-08-02');
+INSERT INTO Person (name, birthdate) VALUES ('Sigourney Weaver', '1949-10-08');
+
+UPDATE Movie SET director_id = 1 WHERE movie_id = 1;
+UPDATE Movie SET director_id = 3 WHERE movie_id = 2;
+UPDATE Movie SET director_id = 5 WHERE movie_id = 6;
+UPDATE Movie SET director_id = 7 WHERE movie_id = 7;
+UPDATE Movie SET director_id = 1 WHERE movie_id = 1;
+UPDATE Movie SET director_id = 1 WHERE movie_id = 11;
+UPDATE Movie SET director_id = 1 WHERE movie_id = 12;

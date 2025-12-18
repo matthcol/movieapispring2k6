@@ -1,16 +1,15 @@
 package org.example.movieapi.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 //Lombok
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(of = {
+        "movieId", "title", "releaseYear"
+})
 @Setter
 @Getter
 //JPA
@@ -23,6 +22,7 @@ public class Movie {
     private int releaseYear;
     private Integer duration;
 
-
-
+    @ManyToOne(fetch = FetchType.LAZY) //Par défaut --> EAGER (= On va chercher systématiquement l'objet). LAZY --> C'est que quand on demandera
+    @JoinColumn(name = "director_id")
+    private Person director;
 }

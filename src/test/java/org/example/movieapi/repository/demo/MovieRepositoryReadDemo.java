@@ -160,4 +160,22 @@ public class MovieRepositoryReadDemo {
         movieRepository.findByYearDuration(1999, 100)
                 .forEach(System.out::println);
     }
+
+//    @Test
+//    void demoFindByDirector(){
+//        movieRepository.findByDirectorNameContainingIgnoreCase("James cameron")
+//                .forEach(System.out::println);
+//    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Cameron", "James", "james cameron"})
+    void demoFindByDirectorName(String name){
+        movieRepository.findByDirectorName(name, Sort.by("director.personId","releaseYear"))
+                .forEach(movie -> System.out.println(MessageFormat.format(
+                        "Film de {0,number,#} - {1} réalisé par {2}",
+                        movie.getReleaseYear(),
+                        movie.getTitle(),
+                        movie.getDirector().getName()
+                )));
+    }
 }

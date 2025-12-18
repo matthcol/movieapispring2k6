@@ -15,6 +15,8 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     //A partir d'un mot dans le tire en ignorant la casse et année après
     List<Movie> findByTitleContainingIgnoreCaseAndReleaseYearGreaterThan (String title, int yearMin, Sort sort);
 
+    //List<Movie> findByDirectorNameContainingIgnoreCase (String name);
+
     //On fait nous mêmes la requête (en JPQL):
     @Query("""
               SELECT m
@@ -24,6 +26,14 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
               ORDER BY m.releaseYear, m.title
               """)
     List<Movie> findByTitleYear (String title, int yearMin);
+
+    @Query("""
+            SELECT m
+            FROM Movie m
+            JOIN FETCH m.director d
+            WHERE d.name like %:name%
+            """)//Le FETCH permet, pour cette requête, de remplir m.director avec l'objet associé
+    List<Movie> findByDirectorName (String name, Sort sort);
 
     @NativeQuery(
             """
