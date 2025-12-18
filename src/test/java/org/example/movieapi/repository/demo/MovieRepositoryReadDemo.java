@@ -161,16 +161,34 @@ public class MovieRepositoryReadDemo {
                 .forEach(System.out::println);
     }
 
-//    @Test
-//    void demoFindByDirector(){
-//        movieRepository.findByDirectorNameContainingIgnoreCase("James cameron")
-//                .forEach(System.out::println);
-//    }
+    @Test
+    void demoFindByDirector(){
+        movieRepository.findByDirectorNameContaining("James Cameron")
+                .forEach(System.out::println);
+    }
 
     @ParameterizedTest
-    @ValueSource(strings = {"Cameron", "James", "james cameron"})
+    @ValueSource(strings = {
+            "Cameron", "James", "James Cameron",  // OK
+            "james cameron"  // KO
+    })
     void demoFindByDirectorName(String name){
         movieRepository.findByDirectorName(name, Sort.by("director.personId","releaseYear"))
+                .forEach(movie -> System.out.println(MessageFormat.format(
+                        "Film de {0,number,#} - {1} réalisé par {2}",
+                        movie.getReleaseYear(),
+                        movie.getTitle(),
+                        movie.getDirector().getName()
+                )));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "% Cameron", "James %", "James Cameron",  "james cameron"
+    })
+    void demoFindByDirectorNameCI(String namePattern){
+        String namePatternNormalize = namePattern.toLowerCase();
+        movieRepository.findByDirectorNameCI(namePatternNormalize, Sort.by("director.personId","releaseYear"))
                 .forEach(movie -> System.out.println(MessageFormat.format(
                         "Film de {0,number,#} - {1} réalisé par {2}",
                         movie.getReleaseYear(),
