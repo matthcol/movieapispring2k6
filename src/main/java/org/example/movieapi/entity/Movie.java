@@ -59,5 +59,6 @@ public class Movie {
     @ElementCollection
     @CollectionTable(name = "have_genre",
             joinColumns = @JoinColumn(name = "movie_id"))
+    @Column(name = "genre")
     private Set<String> genres = new HashSet<>();
 }

@@ -80,8 +80,9 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     //NATIVE QUERY (en dernier recours):
     @NativeQuery(
             """
-                    SELECT m.movie_id, m.title, m.release_year, m.duration
+                    SELECT m.movie_id, m.title, m.release_year, m.duration, m.director_id, hg.genres
                     FROM movie m
+                    LEFT JOIN have_genre hg on m.movie_id = hg.movie_id
                     WHERE m.release_year <= :yearMax
                     AND m.duration > :durMin
                     ORDER BY m.duration desc
