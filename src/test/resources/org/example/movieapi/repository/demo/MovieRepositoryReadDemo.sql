@@ -10,6 +10,7 @@ INSERT INTO Movie (title, release_year, duration) VALUES ('The Fast and the Furi
 INSERT INTO Movie (title, release_year, duration) VALUES ('Avengers: Endgame', 2019, 181);
 INSERT INTO Movie (title, release_year, duration) VALUES ('The Terminator', 1984, 107);
 INSERT INTO Movie (title, release_year, duration) VALUES ('Terminator 2: Judgment Day', 1991, 137);
+INSERT INTO Movie (title, release_year, duration) VALUES ('Night of the Day of the Dawn of the Son of the Bride of the Return of the Revenge of the Terror of the Attack of the Evil Mutant Hellbound Flesh Eating Crawling Alien Zombified Subhumanoid Living Dead, Part 5', 2011, 84);
 
 INSERT INTO Person (name, birthdate) VALUES ('James Cameron', '1954-08-16');
 INSERT INTO Person (name, birthdate) VALUES ('Zoe Saldana','1978-06-19');
@@ -29,3 +30,10 @@ UPDATE Movie SET director_id = 7 WHERE movie_id = 7;
 UPDATE Movie SET director_id = 1 WHERE movie_id = 1;
 UPDATE Movie SET director_id = 1 WHERE movie_id = 11;
 UPDATE Movie SET director_id = 1 WHERE movie_id = 12;
+
+INSERT INTO Play (movie_id, actor_id) VALUES (1,2);
+INSERT INTO Play (movie_id, actor_id) VALUES (1,9);
+INSERT INTO Play (movie_id, actor_id) VALUES (1,10);
+
+INSERT INTO Play (movie_id, actor_id) VALUES (6,6);
+INSERT INTO Play (movie_id, actor_id) VALUES (7,6);

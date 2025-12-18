@@ -2,6 +2,7 @@ package org.example.movieapi.repository.demo;
 
 import org.example.movieapi.entity.Movie;
 import org.example.movieapi.repository.MovieRepository;
+import org.example.movieapi.repository.PersonRepository;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.*;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.text.MessageFormat;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Named.named;
@@ -24,6 +26,9 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 public class MovieRepositoryReadDemo {
     @Autowired
     MovieRepository movieRepository;
+
+    @Autowired
+    PersonRepository personRepository;
 
     @Test
     void demoFindAll(){
@@ -195,5 +200,63 @@ public class MovieRepositoryReadDemo {
                         movie.getTitle(),
                         movie.getDirector().getName()
                 )));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "Sam", "Daniel", "Radcliffe", "Corenswet"
+    })
+    void demoFindByActorsName(String nameActor){
+        movieRepository.findByActorName(nameActor, Sort.by(
+                "releaseYear"))
+                .forEach(movie -> System.out.println(
+                        MessageFormat.format(
+                                "Acteur {0} a joué dans: {1} ({2,number,#})",
+                                nameActor,
+                                movie.getTitle(),
+                                movie.getReleaseYear()
+                        )
+                ));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1,2,6,9,10,0})
+    void demoFindByActorId(int actorId){
+        personRepository.findById(actorId)
+                .ifPresentOrElse(
+                        person -> movieRepository.findByActorId(person.getPersonId())
+                                .forEach( movie -> System.out.println(MessageFormat.format(
+                                        "Acteur {0} avec ID {1} à joué dans le film {2} ({3})",
+                                        person.getName(),
+                                        actorId,
+                                        movie.getTitle(),
+                                        movie.getReleaseYear()
+                                ))),
+                        () -> System.out.println("Aucun acteur n'a été trouvé avec l'ID: "+actorId)
+                );
+    }
+
+    @Test
+    void demoFindByIdEntityGraph(){
+        int movieId = 1;
+        movieRepository.findById(movieId)
+                .ifPresent(
+                        movie -> {
+                            System.out.println(MessageFormat.format(
+                                    "Le film avec ID {0} est: {1} ({2})",
+                                    movieId,
+                                    movie.getTitle(),
+                                    movie.getReleaseYear()
+                            ));
+                            System.out.println("Le réalisateur est: " + (
+                                    Objects.nonNull(movie.getDirector())
+                                    ? movie.getDirector().getName()
+                                            : "Inconnu"));
+                            System.out.println("Les acteurs sont: ");
+                            movie.getActors().forEach(
+                                    actor -> System.out.println("     - " + actor.getName())
+                            );
+                        }
+                );
     }
 }

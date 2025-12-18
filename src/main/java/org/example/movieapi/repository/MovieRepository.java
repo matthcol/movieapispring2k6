@@ -2,13 +2,19 @@ package org.example.movieapi.repository;
 
 import org.example.movieapi.entity.Movie;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.NativeQuery;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MovieRepository extends JpaRepository<Movie, Integer> {
+    @EntityGraph("Movie.directorAndActors")
+    @Override
+    Optional<Movie> findById(Integer id);
+
     //Utilisation de Query Lookup (cf tableau)
     //https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html
 
@@ -52,6 +58,26 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
             """)//Le FETCH permet, pour cette requête, de remplir m.director avec l'objet associé
     List<Movie> findByDirectorNameCI (String name, Sort sort);
 
+    @Query("""
+            SELECT m
+            FROM Movie m
+            JOIN m.actors a
+            WHERE a.name like %:name%
+            """)
+    List<Movie> findByActorName (String name, Sort sort);
+
+    @Query("""
+            SELECT m
+            FROM Movie m
+            JOIN m.actors a
+            WHERE a.personId = :actorId
+            ORDER BY a.personId, m.releaseYear desc
+            """)
+    List<Movie> findByActorId (int actorId);
+
+    //On peut aussi faire des requêtes avec l'API "criteria" mais on ne fait pas ici :)
+
+    //NATIVE QUERY (en dernier recours):
     @NativeQuery(
             """
                     SELECT m.movie_id, m.title, m.release_year, m.duration
