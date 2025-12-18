@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 
+import java.text.MessageFormat;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @DataJpaTest //Met en place la partie JPA
@@ -53,9 +56,14 @@ class MovieRepositoryCrudDemo {
         //Update:
         System.out.println(movie2);
         movie2.setDuration(197);
+        Collections.addAll(movie2.getGenres(),"Action", "Adventure", "Sci-fi");
+
         movieRepository.flush();//Pour synchroniser les modifs avec la DB
         System.out.println("###### Après Update:");
         System.out.println(movie2);
+//        movie2.getGenres().stream()
+//                .collect(Collectors.joining(", "));
+        System.out.println("Genres: " + String.join(", ", movie2.getGenres()));
 
         //Delete:
         movieRepository.delete(movie2);

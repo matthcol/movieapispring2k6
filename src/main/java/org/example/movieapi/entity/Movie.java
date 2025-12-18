@@ -55,4 +55,9 @@ public class Movie {
     //private List<Person> actors = new ArrayList<>(); //Pour les collections, on initialise (même à vide) pour éviter des catstrophes
     //On passe par un set (ensemble) car ca permet de ne pas prêter importance à l'ordre
     private Set<Person> actors = new HashSet<>();
+
+    @ElementCollection
+    @CollectionTable(name = "have_genre",
+            joinColumns = @JoinColumn(name = "movie_id"))
+    private Set<String> genres = new HashSet<>();
 }
