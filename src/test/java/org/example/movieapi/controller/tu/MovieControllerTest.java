@@ -6,6 +6,8 @@ import org.example.movieapi.dto.PersonSimpleDto;
 import org.example.movieapi.service.MovieService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,7 @@ class MovieControllerTest {
 
     @Test
     void testGetMovie_whenAbsent() throws Exception {
+
         //Préparer les hypothèses:
         int movieId = 5;
 
@@ -57,6 +60,7 @@ class MovieControllerTest {
 
     @Test
     void testGetMovie_whenPresent() throws Exception {
+
         //Préparer les hypothèses:
         int movieId = 5;
         String title = "Avatar 1";
@@ -112,6 +116,33 @@ class MovieControllerTest {
                 .should()
                 .getMovie(movieId)
         ;
+    }
+
+    //Le Add correspond aux requêtes "POST"
+    @ParameterizedTest
+    @CsvSource(
+            quoteCharacter = '|',
+            value = {
+                    "Avatar 1,2018,180,|action,sci-fi,adventure|",
+                    "Avatar 2,2023,183,",
+                    "Avatar 3,2025,,|action,sci-fi,adventure|",
+                    "|Night of the Day of the Dawn of the Son of the Bride of the Return of the Revenge of the Terror of the Attack of the Evil Mutant Hellbound Flesh Eating Crawling Alien Zombified Subhumanoid Living Dead, Part 5|,2011,,",
+                    "Z,1969,,"
+            }
+    )
+    void testAddMovie_whenValid(String title, int releaseYear, Integer duration, String genres){
+
+        //Préparer un JSON à envoyer à partir des hypothèses:
+
+
+        //Préparer la réponse du (Mock)Service:
+
+    }
+
+    @Test
+    void testAddMovie_whenNotValid(){
+
+
     }
 
 }
