@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class FakeMovieService implements MovieService {
@@ -37,6 +38,21 @@ public class FakeMovieService implements MovieService {
     }
 
     @Override
+    public List<MovieSimpleDto> getMovieByTitle(String title) {
+        return List.of();
+    }
+
+    @Override
+    public List<MovieSimpleDto> getMovieByYear(int year) {
+        return List.of();
+    }
+
+    @Override
+    public List<MovieSimpleDto> getMovieByTitleAndYear(String title, int year) {
+        return List.of();
+    }
+
+    @Override
     public MovieSimpleDto addMovie(MovieCreateDto movieDto) {
         return MovieSimpleDto.builder()
                 .movieId(5)
@@ -45,5 +61,25 @@ public class FakeMovieService implements MovieService {
                 .duration(movieDto.getDuration())
                 .genres(movieDto.getGenres())
                 .build();
+    }
+
+    @Override
+    public Optional<MovieDetailedDto> updateMovie(MovieSimpleDto movieSimpleDto) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<MovieDetailedDto> setDirector(int movieId, int directorId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<MovieDetailedDto> setActors(int movieId, Set<Integer> actorIds) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<MovieDetailedDto> deleteMovie(int movieId) {
+        return Optional.empty();
     }
 }

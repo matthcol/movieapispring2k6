@@ -13,7 +13,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @RestController //On a crée un nouveau type de composant découvrable automatiquement
 @RequestMapping("/api/movie") //Tuning --> personnalisation de la route
@@ -53,10 +55,58 @@ public class MovieController {
                 );
     }
 
+    // URL examples:
+    //              * /api/movie/search?t=star&y=1977
+    //              * /api/movie/search?t=star
+    //              * /api/movie/search?y=1977
+    @GetMapping("/search")
+    public List<MovieSimpleDto> searchMovie(
+            @RequestParam(required = false, name = "t") String titlePart,
+            @RequestParam(required = false, name = "y") Integer year
+    ){
+        if (Objects.nonNull(titlePart) && Objects.nonNull(year)){
+            return movieService.getMovieByTitleAndYear(titlePart, year);
+        } else if (Objects.nonNull(titlePart)) {
+            return movieService.getMovieByTitle(titlePart);
+        } else if (Objects.nonNull(year)) {
+            return movieService.getMovieByYear(year);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No search criteria provided");
+        }
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public MovieSimpleDto addMovie(@RequestBody @Valid MovieCreateDto movieDto){
         //On utlise le "@Valid" pour prendre en compte les annotations des min, max, notNull, ...
         return movieService.addMovie(movieDto);
+    }
+
+    @PutMapping
+    public MovieDetailedDto updateMovie(@RequestBody MovieSimpleDto movieSimpleDto){
+
+        return movieService.updateMovie(movieSimpleDto)
+                .orElseThrow( () -> new NotFoundException("movie", movieSimpleDto.getMovieId()));
+    }
+
+    @PatchMapping("/{movieId}/director/{directorId}")
+    public MovieDetailedDto setDirector(@PathVariable int movieId, @PathVariable int directorId){
+        return movieService.setDirector(movieId, directorId)
+                .orElseThrow(() -> new NotFoundException("movie or person", movieId) );
+        //TODO: Prévoir plusieurs ID et plusieurs types d'entités
+    }
+
+    @PatchMapping("/{movieId}/actors")
+    public MovieDetailedDto setActors(@PathVariable int movieId, @RequestBody Set<Integer> actorIds){
+        return movieService.setActors(movieId, actorIds)
+                .orElseThrow( () -> new NotFoundException("movie or actors", movieId));
+        //TODO:  Prévoir plusieurs ID et plusieurs types d'entités
+    }
+
+    @DeleteMapping("/{movieId}")
+    public MovieDetailedDto deleteMovie(@PathVariable int movieId){
+
+        return movieService.deleteMovie(movieId)
+                .orElseThrow( () -> new NotFoundException("movie", movieId));
     }
 }
