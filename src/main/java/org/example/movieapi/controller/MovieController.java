@@ -1,5 +1,6 @@
 package org.example.movieapi.controller;
 
+import jakarta.validation.Valid;
 import org.example.movieapi.dto.MovieCreateDto;
 import org.example.movieapi.dto.MovieDetailedDto;
 import org.example.movieapi.dto.MovieSimpleDto;
@@ -54,7 +55,8 @@ public class MovieController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public MovieSimpleDto addMovie(@RequestBody MovieCreateDto movieDto){
+    public MovieSimpleDto addMovie(@RequestBody @Valid MovieCreateDto movieDto){
+        //On utlise le "@Valid" pour prendre en compte les annotations des min, max, notNull, ...
         return movieService.addMovie(movieDto);
     }
 }

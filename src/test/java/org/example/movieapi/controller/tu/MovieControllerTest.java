@@ -180,9 +180,34 @@ class MovieControllerTest {
                 .addMovie(ArgumentMatchers.any());
     }
 
-    @Test
-    void testAddMovie_whenNotValid(){
+    @ParameterizedTest
+    @CsvSource(
+            quoteCharacter = '|',
+            value = {
+                    ",2018,180,|action,sci-fi,adventure|",
+                    "||,2018,180,|action,sci-fi,adventure|",
+                    "Les Chroniques Interdites du Dernier Gardien des Ombres Éternelles : La Prophétie Oubliée des Sept Royaumes Perdus et la Quête Désespérée pour Retrouver l'Artefact Ancestral Avant que les Forces Obscures ne Détruisent l'Équilibre Cosmique à Jamais P1!,2018,180,|action,sci-fi,adventure|",
+                    "Avatar 1,,180,|action,sci-fi,adventure|",
+                    "Avatar 1,1849,180,|action,sci-fi,adventure|"
+            }
+    )
+    //TODO: Travailler sur l'étiquetage des tests
+    void testAddMovie_whenNotValid(String title, Integer releaseYear, Integer duration, String genres) throws Exception {
 
+        String movieJsonToSend = JsonProvider.movieJSON(title, releaseYear, duration, genres);
+
+        mockMvc.perform(post(BASE_URI)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(movieJsonToSend)
+                )
+                .andDo(print()) //ALT entrée sur le print de "MockMvcResultHandlers.print()" pour avoir cet affichage
+
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        ;
+
+        BDDMockito.then(movieService)
+                .shouldHaveNoInteractions();
 
     }
 
