@@ -3,6 +3,7 @@ package org.example.movieapi.controller;
 import org.example.movieapi.dto.MovieCreateDto;
 import org.example.movieapi.dto.MovieDetailedDto;
 import org.example.movieapi.dto.MovieSimpleDto;
+import org.example.movieapi.exception.NotFoundException;
 import org.example.movieapi.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,18 +41,20 @@ public class MovieController {
     @GetMapping("/{movieId}")
     public MovieDetailedDto getMovie(@PathVariable("movieId") int movieId){
         return movieService.getMovie(movieId)
+//                .orElseThrow(
+//                        () -> new ResponseStatusException(
+//                                HttpStatus.NOT_FOUND,
+//                                MessageFormat.format("Movie {0} not found", movieId)
+//                        )
+//                );
                 .orElseThrow(
-                        () -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                MessageFormat.format("Movie {0} not found", movieId)
-                        )
-                        //TODO: Améliorer par rapport aux divers status (400/500)
+                        () -> new NotFoundException("movie",movieId)
                 );
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public MovieSimpleDto addMovie(@RequestBody MovieCreateDto movieDto){
         return movieService.addMovie(movieDto);
     }
-
 }
