@@ -2,7 +2,9 @@ package org.example.movieapi.controller.tu;
 
 import org.example.movieapi.controller.MovieController;
 import org.example.movieapi.dto.MovieDetailedDto;
+import org.example.movieapi.dto.PersonSimpleDto;
 import org.example.movieapi.service.MovieService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
@@ -61,16 +63,33 @@ class MovieControllerTest {
         int releaseYear = 2018;
         int duration = 160;
 
+        String directorName = "James Cameron";
+
+        PersonSimpleDto director = PersonSimpleDto.builder()
+                .name(directorName)
+                .build();
+
+        PersonSimpleDto actor1 = PersonSimpleDto.builder()
+                        .name("Zoé Saldaña")
+                        .build();
+
+        PersonSimpleDto actor2 = PersonSimpleDto.builder()
+                .name("Sam Worthington")
+                .build();
+
+        MovieDetailedDto movieDetail = MovieDetailedDto.builder()
+                .movieId(movieId)
+                .title(title)
+                .releaseYear(releaseYear)
+                .duration(duration)
+                .director(director)
+                .actor(actor1)
+                .actor(actor2)
+                .build();
+
         //Préparer le composant Mock:
         Mockito.when(movieService.getMovie(movieId))
-                .thenReturn(Optional.of(
-                        MovieDetailedDto.builder()
-                                .movieId(movieId)
-                                .title(title)
-                                .releaseYear(releaseYear)
-                                .duration(duration)
-                                .build()
-                ));
+                .thenReturn(Optional.of(movieDetail));
 
         //Appeler le controller via le composant "mockMvc":
         mockMvc.perform(MockMvcRequestBuilders.get(BASE_URI + "/{movieId}", movieId)
@@ -83,7 +102,9 @@ class MovieControllerTest {
                         //$ désigne l'objet qu'on reçoit
                         MockMvcResultMatchers.jsonPath("$.title").value(title),
                         MockMvcResultMatchers.jsonPath("$.releaseYear").value(releaseYear),
-                        MockMvcResultMatchers.jsonPath("$.duration").value(duration)
+                        MockMvcResultMatchers.jsonPath("$.duration").value(duration),
+                        MockMvcResultMatchers.jsonPath("$.director.name").value(directorName),
+                        MockMvcResultMatchers.jsonPath("$.actors", Matchers.hasSize(2))
                 )
         ;
         //On va vérifier que le MockService a bien été appelé:
