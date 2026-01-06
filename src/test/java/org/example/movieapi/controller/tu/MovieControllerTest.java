@@ -1,6 +1,7 @@
 package org.example.movieapi.controller.tu;
 
 import org.example.movieapi.controller.MovieController;
+import org.example.movieapi.controller.tu.fixture.JsonProvider;
 import org.example.movieapi.dto.MovieDetailedDto;
 import org.example.movieapi.dto.PersonSimpleDto;
 import org.example.movieapi.service.MovieService;
@@ -133,7 +134,8 @@ class MovieControllerTest {
     void testAddMovie_whenValid(String title, int releaseYear, Integer duration, String genres){
 
         //Préparer un JSON à envoyer à partir des hypothèses:
-
+        String movieJsonToSend = JsonProvider.movieJSON(title, releaseYear, duration, genres);
+        System.out.println(movieJsonToSend);
 
         //Préparer la réponse du (Mock)Service:
 
