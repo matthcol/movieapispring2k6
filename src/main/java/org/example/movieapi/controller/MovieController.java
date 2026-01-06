@@ -13,6 +13,7 @@ import java.util.Optional;
 @RestController //On a crée un nouveau type de composant découvrable automatiquement
 @RequestMapping("/api/movie") //Tuning --> personnalisation de la route
 public class MovieController {
+
     @Autowired
     private MovieService movieService;
 
