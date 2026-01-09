@@ -34,11 +34,11 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
     @Query("""
               SELECT m
               FROM Movie m
-              WHERE m.releaseYear > :yearMin
+              WHERE m.releaseYear = :year
               AND UPPER(m.title) like :title
               ORDER BY m.releaseYear, m.title
               """)
-    List<Movie> findByTitleYear (String title, int yearMin);
+    List<Movie> findByTitleYear (String title, int year);
 
     @Query("""
             SELECT m

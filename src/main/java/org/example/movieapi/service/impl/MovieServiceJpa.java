@@ -32,7 +32,6 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public List<MovieSimpleDto> getMovies() {
-
         return movieRepository.findAll()
                 .parallelStream()
                 .map( movieEntity -> modelMapper.map(
@@ -43,12 +42,14 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public Optional<MovieDetailedDto> getMovie(int movieId) {
-        return Optional.empty();
+        return movieRepository.findById(movieId)
+                .map( movieEntity -> modelMapper.map(
+                        movieEntity, MovieDetailedDto.class
+                ));
     }
 
     @Override
     public List<MovieSimpleDto> getMovieByTitle(String title) {
-
         return movieRepository.findByTitleContainingIgnoreCase(title)
                 .parallelStream()
                 .map(movieEntity -> modelMapper.map(
@@ -59,7 +60,6 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public List<MovieSimpleDto> getMovieByYear(int year) {
-
         return movieRepository.findByReleaseYear(year)
                 .parallelStream()
                 .map(movieEntity -> modelMapper.map(
@@ -70,8 +70,8 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public List<MovieSimpleDto> getMovieByTitleAndYear(String title, int year) {
-
-        return movieRepository.findByTitleYear(title, year)
+        var patternTitle = '%' + title.toUpperCase() + '%';
+        return movieRepository.findByTitleYear(patternTitle, year)
                 .parallelStream()
                 .map(movieEntity -> modelMapper.map(
                         movieEntity, MovieSimpleDto.class
@@ -81,11 +81,8 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public MovieSimpleDto addMovie(MovieCreateDto movieDto) {
-
         var movieEntity = modelMapper.map(movieDto, Movie.class);
-
         movieRepository.saveAndFlush(movieEntity);
-
         return modelMapper.map(movieEntity, MovieSimpleDto.class);
     }
 
@@ -96,11 +93,15 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public Optional<MovieDetailedDto> setDirector(int movieId, int directorId) {
+
+
         return Optional.empty();
     }
 
     @Override
     public Optional<MovieDetailedDto> setActors(int movieId, Set<Integer> actorIds) {
+
+
         return Optional.empty();
     }
 
