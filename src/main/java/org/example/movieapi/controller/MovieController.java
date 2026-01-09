@@ -75,8 +75,8 @@ public class MovieController {
         }
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public MovieSimpleDto addMovie(@RequestBody @Valid MovieCreateDto movieDto){
         //On utlise le "@Valid" pour prendre en compte les annotations des min, max, notNull, ...
         return movieService.addMovie(movieDto);

@@ -93,15 +93,11 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public Optional<MovieDetailedDto> setDirector(int movieId, int directorId) {
-
-
         return Optional.empty();
     }
 
     @Override
     public Optional<MovieDetailedDto> setActors(int movieId, Set<Integer> actorIds) {
-
-
         return Optional.empty();
     }
 
