@@ -96,6 +96,13 @@
 			<optional>true</optional>
 		</dependency>
 
+        <!-- Autres dépendances -->
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.2.6</version>
+        </dependency>
+
         <!-- Dépendances de test -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

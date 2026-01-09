@@ -3,7 +3,10 @@ package org.example.movieapi.service.impl;
 import org.example.movieapi.dto.MovieCreateDto;
 import org.example.movieapi.dto.MovieDetailedDto;
 import org.example.movieapi.dto.MovieSimpleDto;
+import org.example.movieapi.repository.MovieRepository;
 import org.example.movieapi.service.MovieService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -12,31 +15,32 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-@Profile("proto")
-public class FakeMovieService implements MovieService {
+@Profile("default") //Ce service ne sera activé que dans le profil "defaut"
+// Ca permet de lancer l'application même si on a 2 Services --> On met celui-ci en "default"
+public class MovieServiceJpa implements MovieService {
+//TODO: Faire les tests unitaires --> Comme pour la partie "MovieService" et on va Mock le composant sous-jacent (= Repository)
+
+    //On va définir un attribut de ce composant:
+    @Autowired //DI = Injection de dépendance
+    private MovieRepository movieRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
     public List<MovieSimpleDto> getMovies() {
-        return List.of(
-                MovieSimpleDto.builder()
-                        .title("Avatar")
-                        .build(),
-                MovieSimpleDto.builder()
-                        .title("Harry Potter")
-                        .build(),
-                MovieSimpleDto.builder()
-                        .title("One Battle After Another")
-                        .build()
-        );
+
+        return movieRepository.findAll()
+                .parallelStream()
+                .map( movieEntity -> modelMapper.map(
+                        movieEntity, MovieSimpleDto.class
+                ))
+                .toList();
     }
 
     @Override
     public Optional<MovieDetailedDto> getMovie(int movieId) {
-        return Optional.of(
-               MovieDetailedDto.builder()
-                       .movieId(movieId)
-                       .title("Fast And Furious")
-                       .build()
-        );
+        return Optional.empty();
     }
 
     @Override
@@ -56,13 +60,7 @@ public class FakeMovieService implements MovieService {
 
     @Override
     public MovieSimpleDto addMovie(MovieCreateDto movieDto) {
-        return MovieSimpleDto.builder()
-                .movieId(5)
-                .title(movieDto.getTitle())
-                .releaseYear(movieDto.getReleaseYear())
-                .duration(movieDto.getDuration())
-                .genres(movieDto.getGenres())
-                .build();
+        return null;
     }
 
     @Override
