@@ -5,6 +5,7 @@ import org.example.movieapi.dto.MovieDetailedDto;
 import org.example.movieapi.dto.MovieSimpleDto;
 import org.example.movieapi.entity.Movie;
 import org.example.movieapi.repository.MovieRepository;
+import org.example.movieapi.repository.PersonRepository;
 import org.example.movieapi.service.MovieService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class MovieServiceJpa implements MovieService {
     //On va définir un attribut de ce composant:
     @Autowired //DI = Injection de dépendance
     private MovieRepository movieRepository;
+
+    @Autowired
+    private PersonRepository personRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -93,7 +97,14 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public Optional<MovieDetailedDto> setDirector(int movieId, int directorId) {
-        return Optional.empty();
+        return movieRepository.findById(movieId)
+                .flatMap( movieEntity -> personRepository.findById(directorId)
+                        .map(directorEntity -> {
+                            movieEntity.setDirector(directorEntity);
+                            movieRepository.flush();
+                            return modelMapper.map(movieEntity, MovieDetailedDto.class);
+                        })
+                );
     }
 
     @Override
