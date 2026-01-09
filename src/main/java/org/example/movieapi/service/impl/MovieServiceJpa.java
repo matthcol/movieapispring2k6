@@ -92,7 +92,12 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public Optional<MovieDetailedDto> updateMovie(MovieSimpleDto movieSimpleDto) {
-        return Optional.empty();
+        return movieRepository.findById(movieSimpleDto.getMovieId())
+                .map(movieEntity -> {
+                    modelMapper.map(movieSimpleDto, movieEntity);
+                    movieRepository.flush();
+                    return modelMapper.map(movieEntity, MovieDetailedDto.class);
+                });
     }
 
     @Override

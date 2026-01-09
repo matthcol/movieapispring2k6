@@ -8,3 +8,5 @@
 
 .\setDirector.ps1 1 1
 .\setDirector.ps1 2 1
+
+.\updateMovie.ps1
