@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-@Profile("default")
+//@Profile("default")
+@Profile("jpa")
 public class PersonServiceJpa implements PersonService {
     @Autowired
     private PersonRepository personRepository;

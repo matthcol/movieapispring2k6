@@ -24,7 +24,8 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional //Permet d'annuler tout le block si on a plusieurs requêtes SQL si il y a une erreur sur une seule.
-@Profile("default") //Ce service ne sera activé que dans le profil "defaut"
+//@Profile("default") //Ce service ne sera activé que dans le profil "defaut"
+@Profile("jpa")
 // Ca permet de lancer l'application même si on a 2 Services --> On met celui-ci en "default"
 public class MovieServiceJpa implements MovieService {
 //TODO: Faire les tests unitaires --> Comme pour la partie "MovieService" et on va Mock le composant sous-jacent (= Repository)
