@@ -9,6 +9,8 @@ import org.example.movieapi.repository.MovieRepository;
 import org.example.movieapi.repository.PersonRepository;
 import org.example.movieapi.service.MovieService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,8 @@ public class MovieServiceJpa implements MovieService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    private Logger logger = LoggerFactory.getLogger(MovieServiceJpa.class);
 
     @Override
     public List<MovieSimpleDto> getMovies() {
@@ -90,6 +94,7 @@ public class MovieServiceJpa implements MovieService {
     public MovieSimpleDto addMovie(MovieCreateDto movieDto) {
         var movieEntity = modelMapper.map(movieDto, Movie.class);
         movieRepository.saveAndFlush(movieEntity);
+        logger.debug("Movie saved: {}", movieEntity);
         return modelMapper.map(movieEntity, MovieSimpleDto.class);
     }
 

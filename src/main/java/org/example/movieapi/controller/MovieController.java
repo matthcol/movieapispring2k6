@@ -6,6 +6,8 @@ import org.example.movieapi.dto.MovieDetailedDto;
 import org.example.movieapi.dto.MovieSimpleDto;
 import org.example.movieapi.exception.NotFoundException;
 import org.example.movieapi.service.MovieService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,8 @@ public class MovieController {
 
     @Autowired
     private MovieService movieService;
+
+    private Logger logger = LoggerFactory.getLogger(MovieController.class);
 
 //    @GetMapping
 //    public List<Movie> getMovies(){
@@ -71,6 +75,7 @@ public class MovieController {
         } else if (Objects.nonNull(year)) {
             return movieService.getMovieByYear(year);
         } else {
+            logger.error("Search movie without criteria");
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No search criteria provided");
         }
     }
@@ -79,7 +84,10 @@ public class MovieController {
     @ResponseStatus(HttpStatus.CREATED)
     public MovieSimpleDto addMovie(@RequestBody @Valid MovieCreateDto movieDto){
         //On utlise le "@Valid" pour prendre en compte les annotations des min, max, notNull, ...
-        return movieService.addMovie(movieDto);
+        logger.debug("Movie to save: {}", movieDto);
+        var result = movieService.addMovie(movieDto);
+        logger.info("Movie {} saved with id {}", result.getTitle(), result.getMovieId());
+        return result;
     }
 
     @PutMapping
