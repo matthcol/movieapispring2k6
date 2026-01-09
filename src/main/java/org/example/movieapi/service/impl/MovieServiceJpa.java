@@ -4,6 +4,7 @@ import org.example.movieapi.dto.MovieCreateDto;
 import org.example.movieapi.dto.MovieDetailedDto;
 import org.example.movieapi.dto.MovieSimpleDto;
 import org.example.movieapi.entity.Movie;
+import org.example.movieapi.entity.Person;
 import org.example.movieapi.repository.MovieRepository;
 import org.example.movieapi.repository.PersonRepository;
 import org.example.movieapi.service.MovieService;
@@ -13,9 +14,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional //Permet d'annuler tout le block si on a plusieurs requêtes SQL si il y a une erreur sur une seule.
@@ -114,7 +117,19 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public Optional<MovieDetailedDto> setActors(int movieId, Set<Integer> actorIds) {
-        return Optional.empty();
+        return movieRepository.findById(movieId)
+                .flatMap(movieEntity -> {
+                    var listActorEntity = personRepository.findAllById(actorIds);
+                    if (listActorEntity.size() != actorIds.size()){
+                        return Optional.empty();
+                    }
+                    //On a trouvé tous les acteurs
+                    movieEntity.setActors(new HashSet<>(listActorEntity));
+                    movieRepository.flush();
+                    return Optional.of(modelMapper.map(movieEntity, MovieDetailedDto.class));
+                    //On fait un "optional.of" car on a un "optional" qui est retourné dans le "if" donc on doit avoir le
+                    //"même type de donnée" dans les 2 return
+                });
     }
 
     @Override

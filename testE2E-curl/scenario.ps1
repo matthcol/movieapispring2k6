@@ -11,4 +11,5 @@
 
 .\updateMovie.ps1
 
-.\deleteMovie.ps1 2
+#.\deleteMovie.ps1 2
+
