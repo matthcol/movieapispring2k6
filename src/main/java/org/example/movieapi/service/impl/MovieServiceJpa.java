@@ -3,18 +3,21 @@ package org.example.movieapi.service.impl;
 import org.example.movieapi.dto.MovieCreateDto;
 import org.example.movieapi.dto.MovieDetailedDto;
 import org.example.movieapi.dto.MovieSimpleDto;
+import org.example.movieapi.entity.Movie;
 import org.example.movieapi.repository.MovieRepository;
 import org.example.movieapi.service.MovieService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @Service
+@Transactional //Permet d'annuler tout le block si on a plusieurs requêtes SQL si il y a une erreur sur une seule.
 @Profile("default") //Ce service ne sera activé que dans le profil "defaut"
 // Ca permet de lancer l'application même si on a 2 Services --> On met celui-ci en "default"
 public class MovieServiceJpa implements MovieService {
@@ -60,7 +63,12 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public MovieSimpleDto addMovie(MovieCreateDto movieDto) {
-        return null;
+
+        var movieEntity = modelMapper.map(movieDto, Movie.class);
+
+        movieRepository.saveAndFlush(movieEntity);
+
+        return modelMapper.map(movieEntity, MovieSimpleDto.class);
     }
 
     @Override
