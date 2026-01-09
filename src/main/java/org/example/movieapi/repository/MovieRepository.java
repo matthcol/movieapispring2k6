@@ -20,11 +20,15 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
 
     List<Movie> findByReleaseYearBetweenOrderByReleaseYear(int year1, int year2);
 
+    List<Movie> findByReleaseYear(int year);
+
     //A partir d'un mot dans le tire en ignorant la casse et année après
     List<Movie> findByTitleContainingIgnoreCaseAndReleaseYearGreaterThan (String title, int yearMin, Sort sort);
 
     // NB: IgnoreCase pas possible sur la propriété de l'objet associé director
     List<Movie> findByDirectorNameContaining(String name);
+
+    List<Movie> findByTitleContainingIgnoreCase(String titlePart);
 
     //On fait nous mêmes la requête (en JPQL):
     @Query("""

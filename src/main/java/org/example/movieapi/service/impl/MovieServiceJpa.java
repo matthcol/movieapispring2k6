@@ -48,17 +48,35 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public List<MovieSimpleDto> getMovieByTitle(String title) {
-        return List.of();
+
+        return movieRepository.findByTitleContainingIgnoreCase(title)
+                .parallelStream()
+                .map(movieEntity -> modelMapper.map(
+                        movieEntity, MovieSimpleDto.class
+                ))
+                .toList();
     }
 
     @Override
     public List<MovieSimpleDto> getMovieByYear(int year) {
-        return List.of();
+
+        return movieRepository.findByReleaseYear(year)
+                .parallelStream()
+                .map(movieEntity -> modelMapper.map(
+                        movieEntity, MovieSimpleDto.class
+                ))
+                .toList();
     }
 
     @Override
     public List<MovieSimpleDto> getMovieByTitleAndYear(String title, int year) {
-        return List.of();
+
+        return movieRepository.findByTitleYear(title, year)
+                .parallelStream()
+                .map(movieEntity -> modelMapper.map(
+                        movieEntity, MovieSimpleDto.class
+                ))
+                .toList();
     }
 
     @Override
