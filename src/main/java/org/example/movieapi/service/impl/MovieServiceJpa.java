@@ -119,6 +119,12 @@ public class MovieServiceJpa implements MovieService {
 
     @Override
     public Optional<MovieDetailedDto> deleteMovie(int movieId) {
-        return Optional.empty();
+        return movieRepository.findById(movieId)
+                .map(movieEntity -> {
+                    var movieDetailDto = modelMapper.map(movieEntity, MovieDetailedDto.class);
+                    movieRepository.deleteById(movieId);
+                    movieRepository.flush();
+                    return movieDetailDto;
+                });
     }
 }

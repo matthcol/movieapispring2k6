@@ -10,3 +10,5 @@
 .\setDirector.ps1 2 1
 
 .\updateMovie.ps1
+
+.\deleteMovie.ps1 2
